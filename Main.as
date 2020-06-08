@@ -3,6 +3,8 @@
 	
 
 	import flash.display.MovieClip;
+	
+	import 	flash.display.Loader;
 
 	import flash.events.Event;
 
@@ -10,14 +12,28 @@
 
 	import flash.ui.Keyboard;
 
-	import flash.events.MouseEvent;
-
+	import flash.events.TimerEvent;
 	
+	import flash.net.URLRequest;
+	
+	import flash.utils.Timer;
+
+	import flash.display.StageScaleMode;
+	
+	import flash.media.Sound;
+	
+	import flash.media.SoundChannel;
+	
+	import fl.transitions.*;
+ import fl.transitions.easing.*;
 
     public class Main extends MovieClip {
-
 		
+		//importing swf:
 
+		var myLoader:Loader = new Loader();                     // create a new instance of the Loader class
+		var title_bg:title_screen = new title_screen;
+		
 		//	importing movieclips:
 
 		var player:player_mc = new player_mc;
@@ -38,7 +54,7 @@
 		var player_maxGravity:Number = 20;				//  The fastest the player will be able to fall
 		var player_doubleJump:Boolean = false;			//	Determinds whether player will double jump or not
 		var player_bounce:Boolean = true;				//	Determinds whether player will bounce off the walls like a ball
-		var player_bounciness:Number = -0.1;			//	How bouncy the player will be if player_bounce is true
+		var player_bounciness:Number = -0.05;			//	How bouncy the player will be if player_bounce is true
 		var player_sideScrollingMode:Boolean = true;	//	Determinds whether player or background moves.
 		var movingB:Boolean=true;
 		var jumping:Boolean=false;
@@ -62,10 +78,44 @@
 		var leftPressed, rightPressed, upPressed, downPressed, spacePressed, shiftPressed:Boolean = false;
 
 		public function Main() {
-			createGame();
+			stage.scaleMode = StageScaleMode.NO_BORDER;
+			stage.scaleMode = StageScaleMode.EXACT_FIT;
+			titleScreen();
+			//createGame();
 		}
 
 
+		
+			
+		function titleScreen(){
+			
+			var url:URLRequest = new URLRequest("title screen.swf"); 
+			
+			
+			myLoader.load(url);                                     // load the SWF file
+			addChild(myLoader);
+			var t1:titlebgm = new titlebgm;	
+			var sndBGMusicChannel:SoundChannel;
+			
+			sndBGMusicChannel=t1.play();
+ 
+			
+			var timer:Timer = new Timer(4500);
+		
+			var afterWaiting:Function = function(event:TimerEvent):void {
+				timer.removeEventListener(TimerEvent.TIMER, afterWaiting);
+				timer = null;
+				removeChild(myLoader);
+				
+				addChild(title_bg);
+				TransitionManager.start(title_bg, {type:Fade, direction:Transition.IN, duration:3, easing:Strong.easeIn});
+ 
+				
+			}
+			timer.addEventListener(TimerEvent.TIMER, afterWaiting);
+			timer.start();
+		}
+		
 		function createGame() {
 
 			addChild(hills);
@@ -74,12 +124,7 @@
 			addChild(hills4);
 
 			addChild(collisions);
-			
-			addChild(player);
-			
-			
-
-			
+			addChild(player);	
 			//player.scaleX = 0.4;
 			//player.scaleY = 0.4;
 			player.height*=0.4;
