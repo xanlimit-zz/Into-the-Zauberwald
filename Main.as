@@ -40,6 +40,7 @@
 		var s1:FX = new FX();
 		var f1:FSBGM = new FSBGM();
 		var t1:gameplay = new gameplay;
+		var white:whiteBG = new whiteBG();
 		
 		var myLoader: Loader = new Loader(); // create a new instance of the Loader class
 		var title_bg: title_screen = new title_screen;
@@ -189,7 +190,7 @@
 								timer2 = null;
 
 								removeChild(myLoader1);
-								var timer3: Timer = new Timer(7000);
+								var timer3: Timer = new Timer(5000);
 								var myLoader2: Loader = new Loader();
 								var url2: URLRequest = new URLRequest("second scene.swf");
 								myLoader2.load(url2); // load the SWF file
@@ -201,7 +202,7 @@
 									timer3.removeEventListener(TimerEvent.TIMER, afterWaiting3);
 									timer3 = null;
 									removeChild(myLoader2);
-									var timer4: Timer = new Timer(25000);
+									var timer4: Timer = new Timer(22000);
 
 									var url3: URLRequest = new URLRequest("scene3.swf");
 									myLoader.load(url3); // load the SWF file
@@ -213,7 +214,7 @@
 										timer4 = null;
 
 										removeChild(myLoader);
-										var timer5: Timer = new Timer(16000);
+										var timer5: Timer = new Timer(13000);
 
 										var url4: URLRequest = new URLRequest("scene4.swf");
 										myLoader.load(url4); // load the SWF file
@@ -225,16 +226,23 @@
 											timer5 = null;
 											stage.addEventListener(Event.ENTER_FRAME, fadeSound2);
 											removeChild(myLoader);
-											TransitionManager.start(t2, {
+											addChild(white);
+											TransitionManager.start(white, {
 												type: Fade,
 												direction: Transition.IN,
 												duration: 3,
 												easing: Strong.easeIn
 											});
-											createGame();
-
-
-
+											
+											var timer6: Timer = new Timer(3000);
+											var afterWaiting6: Function = function (event: TimerEvent): void {
+												timer6.removeEventListener(TimerEvent.TIMER, afterWaiting5);
+												timer6 = null;
+												createGame();
+												removeChild(t2);
+											}
+											timer6.addEventListener(TimerEvent.TIMER, afterWaiting6);
+											timer6.start();
 										}
 										addChild(myLoader);
 										timer5.addEventListener(TimerEvent.TIMER, afterWaiting5);
@@ -300,7 +308,7 @@
 			
 			sndBGMusicChannel = t1.play();
 			
-			sndBGMusicChannel.soundTransform = new SoundTransform(0.1, 0.0);
+			//sndBGMusicChannel.soundTransform = new SoundTransform(0.5, 0.0);
 			
 			player.x = 100;
 			player.y = stage.stageHeight - 100;
@@ -568,7 +576,7 @@
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			
 			sndBGMusicChannel = f1.play();
-			sndBGMusicChannel.soundTransform = new SoundTransform(0.2, 0.0)
+			//sndBGMusicChannel.soundTransform = new SoundTransform(0.5, 0.0)
 			var timer: Timer = new Timer(3000);
 			var url1: URLRequest = new URLRequest("failed scene.swf");
 							var myLoader1: Loader = new Loader();
@@ -587,7 +595,7 @@
 					stage.removeEventListener(KeyboardEvent.KEY_DOWN, go);
 					sndBGMusicChannel.stop();
 					sndBGMusicChannel = t1.play();
-					sndBGMusicChannel.soundTransform = new SoundTransform(0.2, 0.0)
+					//sndBGMusicChannel.soundTransform = new SoundTransform(0.5, 0.0)
 					removeChild(myLoader1);
 					restartGame();
 				}
@@ -625,10 +633,46 @@
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 			jumpChannel = s1.play(0,1);
-			jumpChannel.soundTransform = new SoundTransform(0.2, 0.0);
+			jumpChannel.soundTransform = new SoundTransform(0.5, 0.0);
 			var st:successText = new successText;
 			addChild(st);
+			
+			var timer:Timer = new Timer(4000);
+			
+			var afterWaiting: Function = function (event: TimerEvent): void {
+				timer.removeEventListener(TimerEvent.TIMER, afterWaiting);
+				timer = null;
+				removeChild(hills);
+			removeChild(collisions);
+			removeChild(player);
+				addChild(white);
+				TransitionManager.start(white, {
+							type: Fade,
+							direction: Transition.OUT,
+							duration: 4,
+							easing: Strong.easeOut
+				});
+				var timer2:Timer = new Timer(2000);
+				
+				var afterWaiting2: Function = function (event: TimerEvent): void {
+					timer2.removeEventListener(TimerEvent.TIMER, afterWaiting2);
+					timer2 = null;
+					removeChild(white);
+					var myLoader2: Loader = new Loader();
+					var url2: URLRequest = new URLRequest("end-level_Kindness_new.swf");
+					myLoader2.load(url2);
+					
+					addChild(myLoader2);
+				}
+				timer2.addEventListener(TimerEvent.TIMER, afterWaiting2);
+				timer2.start();
+				
 			}
+			timer.addEventListener(TimerEvent.TIMER, afterWaiting);
+			timer.start();
+				
+			
+		}
 
 		function keyUpHandler(e: KeyboardEvent) {
 
